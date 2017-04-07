@@ -13,3 +13,5 @@ admin.initializeApp({
 /*worker gestion de altas de usuario*/
 require('./firebase-admin/gestion-registro')(admin);
 
+require('./firebase-admin/request-public-promocion')(admin);
+require('./firebase-admin/request-public-oferta')(admin);
