@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.15.2",
     "firebase-admin": "^4.1.4",
-    "jimp": "^0.2.27"
+    "jimp": "^0.2.27",
+    "moment": "^2.18.1"
   }
 }
