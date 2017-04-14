@@ -1,7 +1,7 @@
 'use strict'
 
 const refService = require('./ref-service');
-//const pushNotificationService = require('./push-notification-service');
+const pushNotificationService = require('./push-notification-service');
 const moment = require('moment');
 
 module.exports = (admin) => {
@@ -11,24 +11,35 @@ module.exports = (admin) => {
   ref.on('child_added', (ss) => {
     const requestData = ss.val();
     const userId = ss.key
+    const typpe = requestData.type
     console.log(`Request de notificación del usuario ${userId} tipo: ${requestData.type}`);
     
     //realizar todas las comprobaciones de seguridad para garantizar la integridad de la acción
 
-    createSiteNotification(db, requestData, userId);
-    //pushNotificationService.createPushNotification(db, requestData, userId);
+    createSiteNotification(db, requestData, userId,typpe);
+    pushNotificationService.createPushNotification(db, requestData, userId);
     deleteNotificationRequest(db, userId);
   });
 
 }
 
 
-function createSiteNotification(db, requestData, userId) {
-  var notifObject = {
-    user: userId,
-    text: 'Marcó como favorito una promocion',
-    link: `/promocion/${requestData.userId}/${requestData.slug}`,
-    timestamp: moment().format('X'),
+function createSiteNotification(db, requestData, userId,typpe) {
+    
+    if(typpe == "promocion_fav"){
+      var notifObject = {
+        user: userId,
+        text: 'Se suscribio a una promocion',
+        link: `/promocion/${requestData.userId}/${requestData.slug}`,
+        timestamp: moment().format('X'),
+      }
+    } else {
+      var notifObject = {
+        user: userId,
+        text: 'Se suscribio a una oferta',
+        link: `/oferta/${requestData.userId}/${requestData.slug}`,
+        timestamp: moment().format('X'),
+    }
   }
   var ref = db.ref(refService('notificationsUser', requestData.userId));
   ref.push(notifObject);

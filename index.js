@@ -15,4 +15,4 @@ require('./firebase-admin/gestion-registro')(admin);
 
 require('./firebase-admin/request-public-promocion')(admin);
 require('./firebase-admin/request-public-oferta')(admin);
-require('./firebase-admin/request-notification-promocion')(admin);
+require('./firebase-admin/request-notification')(admin);
