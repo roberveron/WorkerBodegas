@@ -1,4 +1,4 @@
-const Jimp = require('jimp');
+/*const Jimp = require('jimp');
 
 module.exports = {
   saveImage
@@ -33,4 +33,4 @@ function saveImage(imgURL, userId, reintentar = true) {
         }
       });
   });
-}
+}*/
