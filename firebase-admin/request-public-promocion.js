@@ -1,6 +1,13 @@
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 'use strict'
 
+
 const refService = require('./ref-service');
+
 
 module.exports = (admin) => {
   var db = admin.database();
@@ -9,6 +16,7 @@ module.exports = (admin) => {
 ref.on('child_added', (ss) => {
  const userId = ss.key;
  const requestData = ss.val();
+ 
 
   console.log(`Request del usuario ${userId} de hacer una promocion pública: ${requestData.slug}`);
 
@@ -23,7 +31,9 @@ ref.on('child_added', (ss) => {
         console.log('creado un registro en promociones globales');
         anotarPromocionPublico(db, userId, requestData.slug, refNewPromocion.key);
         borrarRequest(db, userId);
+        publicarPromocionCiudad(db, userId, requestData.slug);
       })
+      
  });
 }
 
@@ -46,4 +56,38 @@ function borrarRequest(db, userId) {
     .then(() => {
       console.log('borrado el request');
     });
+}
+
+function publicarPromocionCiudad(db, userId, slug){
+ let data = {
+   uid: userId, 
+   slug: slug
+  }; 
+  
+ let ref = db.ref(refService('promocionesUserOne', data));
+  ref.once('value', ss => {
+   const datospromocion = ss.val();
+   datospromocion.timestamp = null;
+   datospromocion.userId = userId;
+   datospromocion.description = '"'+ datospromocion.description +'"';
+   obtenerCiudadUsuario(db, userId)
+   .then(function(ciudadBodega){
+      let refCiudad = db.ref(refService('ciudadOnePromocionesAndroid', ciudadBodega)).child(slug);
+      refCiudad.set (datospromocion)
+    })
+    .catch(function(err){
+      console.log(err);
+    })
+  })
+}
+
+function obtenerCiudadUsuario(db, userId){
+  return new Promise (function(resolve,reject){
+      let ref = db.ref(refService('userOne',userId)).child('ciudad');
+      ref.once('value', ss => {
+          const ciudadBodega = ss.val();
+
+          resolve (ciudadBodega.replaceAll("\"", ""));
+      })
+  })
 }

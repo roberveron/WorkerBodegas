@@ -2,10 +2,12 @@ module.exports = (local, data = null) => {
   const refs = {
     userAll: () => '/users',
     userOne: (iduser) => `/users/${iduser}`,
+    ciudadOnePromocionesAndroid: (ciudadBodega) => `/ciudades/${ciudadBodega}/promocionesAndroid`,
     userAvatar: (iduser) => `/users/${iduser}/avatar`,
     userPrivateOne: (iduser) => `/userPrivateData/${iduser}`,
     promocionesAll: () => '/promociones',
     promocionesUserAll: (uid) => `/promocionesUser/${uid}`,
+    promocionesUserOne:(data) => `/promocionesUser/${data.uid}/${data.slug}`,
     ofertasAll: () => '/ofertas',
     ofertasUserAll: (uid) => `/ofertasUser/${uid}`,
     requestPublicpromocionAll: () => '/requestPublicpromocion',
