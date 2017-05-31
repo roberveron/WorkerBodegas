@@ -18,10 +18,17 @@ module.exports = function(admin) {
 
 function saveAvatar(db, image, userid) {
   //avatarService.saveImage(image, userid)
+
     //.then( destino => {
       let refAvatar = db.ref(refService('userAvatar', userid));
       refAvatar.set(image);
      //})
+
+    {
+      let refAvatar = db.ref(refService('userAvatar', userid));
+      refAvatar.set(image);
+     }
+
     //.catch( (err) => console.log('error al guardar la imagen de avatar: ', err));
 }
 
