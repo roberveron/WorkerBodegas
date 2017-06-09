@@ -1,3 +1,8 @@
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 'use strict'
 
 const refService = require('./ref-service');
@@ -22,6 +27,7 @@ ref.on('child_added', (ss) => {
         console.log('creado un registro en ofertas globales');
         anotarofertaPublico(db, userId, requestData.slug, refNewoferta.key);
         borrarRequest(db, userId);
+        publicarOfertaCiudad(db, userId, requestData.slug);
       })
  });
 }
@@ -45,4 +51,45 @@ function borrarRequest(db, userId) {
     .then(() => {
       console.log('borrado el request');
     });
+}
+
+function publicarOfertaCiudad(db, userId, slug){
+ let data = {
+   uid: userId, 
+   slug: slug
+  }; 
+  
+ let ref = db.ref(refService('ofertasUserOne', data));
+  ref.once('value', ss => {
+   const datosoferta = ss.val();
+   datosoferta.timestamp = null;
+   datosoferta.texto = null;
+   datosoferta.publicId = null;
+   datosoferta.isPublic = null;
+   datosoferta.downloadURL = '"'+datosoferta.downloadURL+'"';
+   datosoferta.name = '"'+datosoferta.name+'"';
+   datosoferta.precio = '"'+datosoferta.precio+'"';
+   datosoferta.views = "0";
+   datosoferta.description = '"'+datosoferta.description+'"';
+   datosoferta.userId = userId;
+   obtenerCiudadUsuario(db, userId)
+   .then(function(ciudadBodega){
+      let refCiudad = db.ref(refService('ciudadOneOfertasAndroid', ciudadBodega)).child(slug);
+      refCiudad.set (datosoferta)
+    })
+    .catch(function(err){
+      console.log(err);
+    })
+  })
+}
+
+function obtenerCiudadUsuario(db, userId){
+  return new Promise (function(resolve,reject){
+      let ref = db.ref(refService('userOne',userId)).child('ciudad');
+      ref.once('value', ss => {
+          const ciudadBodega = ss.val();
+
+          resolve (ciudadBodega.replaceAll("\"", ""));
+      })
+  })
 }

@@ -68,8 +68,15 @@ function publicarPromocionCiudad(db, userId, slug){
   ref.once('value', ss => {
    const datospromocion = ss.val();
    datospromocion.timestamp = null;
+   datospromocion.texto = null;
+   datospromocion.publicId = null;
+   datospromocion.isPublic = null;
+   datospromocion.downloadURL = '"'+datospromocion.downloadURL+'"';
+   datospromocion.name = '"'+datospromocion.name+'"';
+   datospromocion.precio = '"'+datospromocion.precio+'"';
+   datospromocion.stock = '"'+datospromocion.stock+'"';
+   datospromocion.description = '"'+datospromocion.description+'"';
    datospromocion.userId = userId;
-   datospromocion.description = '"'+ datospromocion.description +'"';
    obtenerCiudadUsuario(db, userId)
    .then(function(ciudadBodega){
       let refCiudad = db.ref(refService('ciudadOnePromocionesAndroid', ciudadBodega)).child(slug);
